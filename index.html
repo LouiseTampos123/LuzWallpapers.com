@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Luz's Wallpapers</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #111;
+      color: #fff;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      text-align: center;
+      padding: 1.5rem;
+      background: #1c1c1c;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 2rem;
+      letter-spacing: 2px;
+    }
+
+    #search {
+      margin-top: 10px;
+      padding: 8px;
+      width: 250px;
+      border-radius: 8px;
+      border: none;
+    }
+
+    .categories {
+      margin-top: 15px;
+    }
+
+    .categories button {
+      margin: 5px;
+      padding: 8px 14px;
+      border: none;
+      border-radius: 20px;
+      background: #333;
+      color: #fff;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .categories button:hover,
+    .categories button.active {
+      background: #ff007f;
+    }
+
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 15px;
+      padding: 20px;
+    }
+
+    .wallpaper {
+      position: relative;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .wallpaper img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.3s ease;
+      cursor: pointer;
+    }
+
+    .wallpaper img:hover {
+      transform: scale(1.05);
+    }
+
+    .download-btn {
+      position: absolute;
+      bottom: 10px;
+      right: 10px;
+      background: rgba(0, 0, 0, 0.7);
+      padding: 8px 12px;
+      border-radius: 6px;
+      color: #fff;
+      font-size: 0.9rem;
+      text-decoration: none;
+      transition: background 0.3s ease;
+    }
+
+    .download-btn:hover {
+      background: #ff007f;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>🌌 Aesthetic Wallpapers</h1>
+    <input type="text" id="search" placeholder="Search wallpapers...">
+    <div class="categories" id="categories">
+      <!-- Buttons will be injected -->
+    </div>
+  </header>
+
+  <main>
+    <div class="gallery" id="gallery">
+      <!-- Wallpapers will be injected here -->
+    </div>
+  </main>
+
+  <script>
+    const wallpapers = [
+      { src: "https://picsum.photos/id/1015/800/600", category: "Nature" },
+      { src: "https://picsum.photos/id/1016/800/600", category: "Minimalist" },
+      { src: "https://picsum.photos/id/1025/800/600", category: "Animals" },
+      { src: "https://picsum.photos/id/1035/800/600", category: "City" },
+      { src: "https://picsum.photos/id/1043/800/600", category: "Dark" },
+      { src: "https://picsum.photos/id/1069/800/600", category: "Neon" },
+    ];
+
+    const gallery = document.getElementById("gallery");
+    const searchInput = document.getElementById("search");
+    const categoriesDiv = document.getElementById("categories");
+
+    // Get unique categories
+    const categories = ["All", ...new Set(wallpapers.map(w => w.category))];
+
+    function renderCategories() {
+      categoriesDiv.innerHTML = "";
+      categories.forEach(cat => {
+        const btn = document.createElement("button");
+        btn.textContent = cat;
+        btn.onclick = () => {
+          document.querySelectorAll(".categories button").forEach(b => b.classList.remove("active"));
+          btn.classList.add("active");
+          renderWallpapers(cat === "All" ? "" : cat);
+        };
+        categoriesDiv.appendChild(btn);
+      });
+    }
+
+    function renderWallpapers(filter = "") {
+      gallery.innerHTML = "";
+      wallpapers
+        .filter(w =>
+          w.category.toLowerCase().includes(filter.toLowerCase()) ||
+          filter === ""
+        )
+        .forEach(w => {
+          const div = document.createElement("div");
+          div.classList.add("wallpaper");
+          div.innerHTML = `
+            <img src="${w.src}" alt="${w.category}">
+            <a class="download-btn" href="${w.src}" download>Download</a>
+          `;
+          gallery.appendChild(div);
+        });
+    }
+
+    searchInput.addEventListener("input", e => {
+      renderWallpapers(e.target.value);
+    });
+
+    // Initial render
+    renderCategories();
+    renderWallpapers();
+    document.querySelector(".categories button").classList.add("active");
+  </script>
+</body>
+</html>
